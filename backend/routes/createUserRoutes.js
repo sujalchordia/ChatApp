@@ -13,12 +13,11 @@ router.post("/createuser",[
     body('email').isEmail(),
     body('password',"Incorrect Password").isLength({ min: 5 }),
     body('name').isLength({ min: 5 })],
-     async(req,res)=>{
+    async(req,res)=>{
         const errors = validationResult(req);
         if (!errors.isEmpty()) {
           return res.status(400).json({ errors: errors.array() });
         }
-    
         const salt=await bcrypt.genSalt(10);
         let securedPassword= await bcrypt.hash(req.body.password,salt)
         try{
@@ -52,7 +51,6 @@ router.post("/createuser",[
             })
         }
     })
-
     router.get("/users",async(req,res)=>{
         try{
             const users=await Users.find({});
@@ -81,12 +79,10 @@ router.post("/createuser",[
             res.status(500).json("errorrrr");
         }
     })
-    
     router.post("/loginuser",[
         body('email').isEmail(),
         body('password',"Incorrect Password").isLength({ min: 5 })],
             async(req,res)=>{
-        
             const errors = validationResult(req);
             if (!errors.isEmpty()) {
               return res.status(400).json({ errors: errors.array() });
@@ -118,6 +114,4 @@ router.post("/createuser",[
                 })
             }
         })
-    
-    
     module.exports=router
