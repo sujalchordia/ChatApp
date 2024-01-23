@@ -63,7 +63,7 @@ io.on("connection",socket=>{
 }
 )
 app.use(express.json({ limit: '10mb' }))
-app.use("/api",require("./routes/createuserroutes"))
+app.use("/api",require("./routes/createUserRoutes"))
 app.use("/api",require("./routes/messageroutes"))
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
