@@ -27,6 +27,31 @@ const Dashboard = () => {
   const userdetails = location.state.datareceived;
   const[socket,setSocket]=useState(null);
 
+
+  const loadConversations = async (setOrder=true) => {
+    try {
+          let response = await fetch(`http://localhost:5000/api/conversation/${id}`, {
+            method: "GET",
+            headers: {
+              'Content-Type': "application/json",
+            }
+          });
+          response = await response.json();
+          setConversations(response);
+          // if (setOrder && response.length > 0) {
+          //   setmainChatvisible(true)
+          //   setmainChat({
+          //     reciever_id: response[0].user._id,
+          //     reciever_name: response[0].user.name,
+          //     conversation_id: response[0].conversationId
+          //   });
+          // }
+        } catch (error) {
+          console.error("Error loading conversations:", error);
+        }
+      }
+
+    
   useEffect(() => {
     setSocket(io("http://localhost:8080"))
   }, []);
@@ -35,6 +60,9 @@ const Dashboard = () => {
     socket?.emit("addUser",id)
     socket?.on('getUsers',users=>{
       setactiveUsers(users)
+    })
+    socket?.on('loadConversations',()=>{
+      loadConversations();
     })
   }, [socket]);
 
@@ -50,29 +78,6 @@ const Dashboard = () => {
 
 
   
-  // Function to load conversations
-  const loadConversations = async (setOrder=true) => {
-    try {
-      let response = await fetch(`http://localhost:5000/api/conversation/${id}`, {
-        method: "GET",
-        headers: {
-          'Content-Type': "application/json",
-        }
-      });
-      response = await response.json();
-      setConversations(response);
-      if (setOrder && response.length > 0) {
-        setmainChatvisible(true)
-        setmainChat({
-          reciever_id: response[0].user._id,
-          reciever_name: response[0].user.name,
-          conversation_id: response[0].conversationId
-        });
-      }
-    } catch (error) {
-      console.error("Error loading conversations:", error);
-    }
-  }
   const loadUser= async () => {
     try {
       let response = await fetch(`http://localhost:5000/api/users`, {
@@ -99,10 +104,21 @@ const Dashboard = () => {
       {/* Left Sidebar */}
       <div className="lg:w-1/4 bg-gray-200 p-4 overflow-auto">
         <div className="bg-gray-200 p-4 max-w-xs mx-auto flex items-center">
+        <div className="mr-4">
+        {userdetails.image?.url ? (
+          <img
+            src={userdetails.image.url}
+            alt="User Avatar"
+            className="rounded-full w-16 h-16 object-cover"  // Adjust the max-width and max-height as needed// Ensures the image is contained within the specified dimensions
+          />
+        ) : (
+          <Avatar name={userdetails.name} size="80" alt="User Avatar" className="w-16 h-16 rounded-full" />
+        )}
+      </div>
           {/* Avatar Image on the left */}
-          <div className="mr-4">
+          {/* <div className="mr-4">
             <Avatar size="80" name={userdetails.name} alt="User Avatar" className="w-16 h-16 rounded-full" />
-          </div>
+          </div> */}
           {/* Main Content on the right */}
           <div>
             {/* Person's Name */}
@@ -117,7 +133,9 @@ const Dashboard = () => {
         <h2 className="text-xl font-bold mb-4">Chats</h2>
         {/* Map through conversations and render UserCard components */}
         {conversations.map(conversation => (
-          <ConversationCard onClick={()=>{setmainChat({
+          <ConversationCard onClick={()=>{
+            setmainChatvisible(true);
+            setmainChat({
             ...mainChat,
             reciever_id:conversation.user.id,
             reciever_name:conversation.user.name,
@@ -177,6 +195,7 @@ const Dashboard = () => {
   return (
     <ConversationCard
       onClick={() => {
+        console.log("hiii")
         setmainChatvisible(true)
         setmainChat({
           ...mainChat,

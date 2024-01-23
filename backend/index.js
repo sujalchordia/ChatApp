@@ -10,6 +10,8 @@ const io=socketIo(8080,{
     origin:"http://localhost:3000"
   }
 })
+io.eio.pingTimeout = 120000; // 2 minutes
+io.eio.pingInterval = 5000;  // 5 seconds
 
 const mongoDB=require("./db");
 const Users = require('./models/Users');
@@ -39,23 +41,35 @@ io.on("connection",socket=>{
     }
   })
   socket.on("sendMessage",async ({senderid,recieverid,conversationId,message})=>{
-    console.log(users, recieverid)
+    console.log(recieverid,"reciever id",senderid,"semder_id")
     const reciever =users.find(user=>user.userId===recieverid)
     const sender=users.find(user=>user.userId===senderid)
     const user= await Users.findById(senderid);
-    console.log("user",user);
-    console.log(reciever,"reciever")
-    console.log(sender,"sender")
     if(reciever && sender){
-      io.to(reciever.socketId).to(sender.socketId).emit("getMessage",{
-        senderid,
-        recieverid,
-        conversationId,
-        message,
-        user:{_id:user._id,email:user.email,name:user.name}
-      })
-    }
+         socket.to(reciever.socketId).emit("getMessage", {
+            senderid,
+            recieverid,
+            conversationId,
+            message,
+            user: { _id: user._id, email: user.email, name: user.name }
+        });
+      }
    })
+
+   socket.on('newConversation', (data) => {
+    const { reciever_id } = data;
+
+    // Assuming you have a function to retrieve the socket ID of the receiver
+    const reciever =users.find(user=>user.userId===reciever_id)
+
+    // If the receiver is connected, emit the 'loadConversations' event to that specific socket
+    if (reciever) {
+      io.to(reciever.socketId).emit('loadConversations');
+    }
+
+    console.log(`New conversation initiated with user ID: ${reciever_id}`);
+  });
+
   socket.on("disconnect",()=>{
    users=users.filter((user)=>socket.id!==user.socketId)
    io.emit("getUsers",users)
@@ -63,7 +77,7 @@ io.on("connection",socket=>{
 }
 )
 app.use(express.json({ limit: '10mb' }))
-app.use("/api",require("./routes/createuserroutes"))
+app.use("/api",require("./routes/createUserRoutes"))
 app.use("/api",require("./routes/messageroutes"))
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)

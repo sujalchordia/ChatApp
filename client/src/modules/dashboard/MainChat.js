@@ -1,5 +1,5 @@
 // Chat.js
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { FiSend } from 'react-icons/fi';
 import Avatar from 'react-avatar';
 
@@ -14,10 +14,14 @@ const Chat = ({
   mainChat,
   setmainChat
 }) => {
+  console.log("current conversation",mainChat.conversation_id)
+  const cid=useRef(mainChat.conversation_id);
   const [messages, setMessages] = useState([]);
   const [inputMessage, setInputMessage] = useState("");
   const[user,setUser]=useState({})
-  
+  useEffect(() => {
+    cid.current = mainChat.conversation_id || null;
+  }, [mainChat.conversation_id]);
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -34,11 +38,15 @@ const Chat = ({
   useEffect(() => {
     loadMessages();
   }, [conversation_id]);
-  useEffect(()=>{
-      socket?.on("getMessage", data => {
+  useEffect(() => {
+    socket?.on("getMessage", data => {
+      console.log(data,"   ",cid.current);
+      if(cid.current === data.conversationId){
+        console.log("REACHED SOCKET")
         setMessages(prev => [...prev, { user: data.user, message: data.message }]);
-      });
-  },[socket])
+      }
+    });
+  }, [socket]); // Add mainChat to the dependency arra
 
 
   
@@ -54,6 +62,9 @@ const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainCh
     })
   });
   const id = await response.json();
+  socket.emit('newConversation', {
+    reciever_id,
+  });
   loadConversations(false)
   setmainChat({
     reciever_id: reciever_id,
@@ -85,6 +96,7 @@ const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainCh
   }, [conversation_id,reciever_id]);
 
   const handleSubmit = async (e) => {
+    console.log(reciever_id)
     e.preventDefault();
     const final_conversation_id = conversation_id ? conversation_id:await makeConversationId(sender_id, reciever_id,reciever_name,setmainChat)
     try {
