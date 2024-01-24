@@ -2,9 +2,10 @@ import './App.css';
 import Dashboard from './modules/dashboard/Dashboard';
 import UserCard from './modules/dashboard/UserCard';
 import SignUp from './modules/form/SignUp';
+
 import { useEffect } from 'react';
 import {
-  BrowserRouter as Router,
+  HashRouter as Router,
   Routes,
   Route,
   // Link
