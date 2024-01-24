@@ -25,7 +25,7 @@ const Chat = ({
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/users/${reciever_id}`);
+        const response = await fetch(`https://chatappwebservice.onrender.com/api/users/${reciever_id}`);
         const userData = await response.json();
         setUser(userData);
       } catch (error) {
@@ -51,7 +51,7 @@ const Chat = ({
 
   
 const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainChat) => {
-  let response = await fetch(`http://localhost:5000/api/conversation`, {
+  let response = await fetch(`https://chatappwebservice.onrender.com/api/conversation`, {
     method: "POST",
     headers: {
       'Content-Type': "application/json",
@@ -79,7 +79,7 @@ const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainCh
   const loadMessages = async () => {
 
     try {
-      let response = await fetch(`http://localhost:5000/api/messages/${conversation_id?conversation_id:"new"}`, {
+      let response = await fetch(`https://chatappwebservice.onrender.com/api/messages/${conversation_id?conversation_id:"new"}`, {
         method: "GET",
         headers: {
           'Content-Type': "application/json",
@@ -106,7 +106,7 @@ const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainCh
         conversationId: final_conversation_id,
         message: inputMessage
       })
-      let response = await fetch(`http://localhost:5000/api/messages`, {
+      let response = await fetch(`https://chatappwebservice.onrender.com/api/messages`, {
         method: "POST",
         headers: {
           'Content-Type': "application/json",

@@ -31,7 +31,7 @@ const Dashboard = () => {
 
   const loadConversations = async (setOrder=true) => {
     try {
-          let response = await fetch(`http://localhost:5000/api/conversation/${id}`, {
+          let response = await fetch(`https://chatappwebservice.onrender.com/api/conversation/${id}`, {
             method: "GET",
             headers: {
               'Content-Type': "application/json",
@@ -82,7 +82,7 @@ const Dashboard = () => {
   
   const loadUser= async () => {
     try {
-      let response = await fetch(`http://localhost:5000/api/users`, {
+      let response = await fetch(`https://chatappwebservice.onrender.com/api/users`, {
         method: "GET",
         headers: {
           'Content-Type': "application/json",

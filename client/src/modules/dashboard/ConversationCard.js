@@ -10,7 +10,7 @@ function ConversationCard({ onClick, name, activeUsers, reciever_id }) {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch(`http://localhost:5000/api/users/${reciever_id}`);
+        const response = await fetch(`https://chatappwebservice.onrender.com/api/users/${reciever_id}`);
         const userData = await response.json();
         setUser(userData);
       } catch (error) {

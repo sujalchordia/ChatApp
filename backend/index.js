@@ -10,7 +10,7 @@ const io=socketIo(server,{
     pingTimeout: 25000, // Maximum time (in milliseconds) for the client to respond to a ping.
     pingInterval: 5000, // How often (in milliseconds) the server sends out a ping to the client.
   cors:{
-    origin:"http://localhost:3000"
+    origin:"https://chatappfrontend-ktwr.onrender.com"
   }
 })
 
@@ -25,7 +25,7 @@ app.get('/', (req, res) => {
 //middleware
 app.use(cors());
 app.use((req,res,next)=>{
-res.setHeader("Access-Control-Allow-Origin","http://localhost:3000");
+res.setHeader("Access-Control-Allow-Origin","https://chatappfrontend-ktwr.onrender.com");
 res.header(
     "Access-Control-Allow-Headers",
     "Origin,X-Requested-With,Control-Type, Accept"
