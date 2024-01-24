@@ -54,7 +54,7 @@ const Dashboard = () => {
 
     
   useEffect(() => {
-    setSocket(io())
+    setSocket(io("https://chatappwebservice.onrender.com/"))
   }, []);
 
   useEffect(() => {
