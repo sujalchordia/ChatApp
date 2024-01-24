@@ -12,6 +12,7 @@ import {io} from "socket.io-client"
 // Import React and other necessary modules
 
 const Dashboard = () => {
+  
   const location = useLocation();
   const [conversations, setConversations] = useState([]);
   const [mainchatvisible,setmainChatvisible]=useState(false);
@@ -61,7 +62,7 @@ const Dashboard = () => {
     socket?.on('getUsers',users=>{
       setactiveUsers(users)
     })
-    socket?.on('loadConversations',()=>{
+    socket?.on('newConversation',()=>{
       loadConversations();
     })
   }, [socket]);
@@ -72,6 +73,7 @@ const Dashboard = () => {
     loadUser()
     loadConversations();
   }, []);
+
   // useEffect(() => {
   //   loadConversations();
   // }, [mainChat]);
@@ -146,7 +148,7 @@ const Dashboard = () => {
       </div>
 
       {/* Middle Chat Area */}
-      <div className="lg:w-3/6 p-4 overflow-hidden">
+      <div className="lg:w-3/6 p-4 pb-0  overflow-hidden ">
   {mainchatvisible? (
     <Chat
       socket={socket}

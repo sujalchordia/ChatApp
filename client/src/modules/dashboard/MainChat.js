@@ -120,16 +120,25 @@ const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainCh
       });
       response = await response.json();
       setInputMessage("");
-      loadMessages();
+      // loadMessages();
     } catch (error) {
       console.error("Error sending message:", error);
     }
   };
+  const messagesEndRef = useRef(null)
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+  }
+
+  useEffect(() => {
+    scrollToBottom()
+  }, [messages]);
 
   return (
-    <div className="flex flex-col h-screen bg-gray-100">
+    <div  className="flex flex-col h-screen bg-gray-100 ">
       {/* Chat Header */}
-      <div className="inline bg-gray-200 p-2 mb-2 rounded-lg">
+      <div className="inline-flex bg-gray-200 p-2 mb-2 rounded-lg">
         {user.image?.url ? (
           <img
             src={user.image.url}
@@ -139,7 +148,7 @@ const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainCh
         ) : (
           <Avatar name={reciever_name} size="35" alt="User Avatar" className="rounded-full mr-3" />
         )}
-        <span className="text-xl font-bold">{reciever_name}</span>
+        <span className="text-xl font-bold pt-4">{reciever_name}</span>
       </div>
 
       {/* Chat Messages */}
@@ -151,6 +160,7 @@ const makeConversationId = async (sender_id, reciever_id,reciever_name,setmainCh
             </div>
           </div>
         ))}
+         <div className="invisible"ref={messagesEndRef} />
       </div>
 
       {/* Chat Input */}
